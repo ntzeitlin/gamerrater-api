@@ -8,6 +8,9 @@ from raterapi.models import Game
 class GameViewSet(ViewSet):
     """Game view set"""
 
+    # ADD TRY EXCEPT STATEMENTS FOR EACH FOREIGN KEY REFERENCE / objects.get
+    # LOOK AT EXAMPLE IN TIMECAPSULE CLASS PROJECT
+
     def create(self, request):
         """Handle POST operations
 
@@ -15,6 +18,7 @@ class GameViewSet(ViewSet):
             Response -- JSON serialized instance
         """
         game = Game()
+        game.user = request.auth.user
         game.sample_name = request.data["name"]
         game.sample_description = request.data["description"]
 
@@ -33,7 +37,7 @@ class GameViewSet(ViewSet):
         """
         try:
             game = Game.objects.get(pk=pk)
-            serializer = GameSerializer(game)
+            serializer = GameSerializer(game, many=False)
             return Response(serializer.data)
         except Exception as ex:
             return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
@@ -97,10 +101,12 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = (
             "id",
+            "user",
             "title",
             "description",
             "designer",
             "number_of_players",
             "estimated_playtime",
             "recommended_age",
+            "categories",
         )
