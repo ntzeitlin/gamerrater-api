@@ -2,7 +2,7 @@ from django.http import HttpResponseServerError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from raterapi.models import Review
+from raterapi.models import Review, Game
 from .game import GameSerializer
 from .users import UserSerializer
 
@@ -17,11 +17,16 @@ class ReviewViewSet(ViewSet):
             Response -- JSON serialized instance
         """
         review = Review()
-        review.sample_name = request.data["name"]
-        review.sample_description = request.data["description"]
+        review.user = request.auth.user
+
+        game = request.data["game"]
+        game_instance = Game.objects.get(pk=game)
+        review.game = game_instance
+        review.comment = request.data["comment"]
+        review.rating = request.data["rating"]
+        review.save()
 
         try:
-            review.save()
             serializer = ReviewSerializer(review)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as ex:
