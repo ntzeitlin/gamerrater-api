@@ -40,7 +40,9 @@ class ReviewViewSet(ViewSet):
         """
         try:
             review = Review.objects.get(pk=pk)
-            serializer = ReviewSerializer(review)
+            serializer = ReviewSerializer(
+                review, many=False, context={"request": request}
+            )
             return Response(serializer.data)
         except Exception as ex:
             return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
@@ -91,7 +93,9 @@ class ReviewViewSet(ViewSet):
         """
         try:
             reviews = Review.objects.all()
-            serializer = ReviewSerializer(reviews, many=True)
+            serializer = ReviewSerializer(
+                reviews, many=True, context={"request": request}
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -102,7 +106,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     game = GameSerializer(many=False)
     user = UserSerializer(many=False)
+    is_owner = serializers.SerializerMethodField()
+
+    def get_is_owner(self, obj):
+        return self.context["request"].user == obj.user
 
     class Meta:
         model = Review
-        fields = ("id", "user", "game", "comment", "rating")
+        fields = ("id", "user", "game", "comment", "rating", "is_owner")

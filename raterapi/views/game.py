@@ -58,7 +58,7 @@ class GameViewSet(ViewSet):
         """
         try:
             game = Game.objects.get(pk=pk)
-            serializer = GameSerializer(game, many=False)
+            serializer = GameSerializer(game, many=False, context={"request": request})
             return Response(serializer.data)
         except Exception as ex:
             return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
@@ -109,7 +109,7 @@ class GameViewSet(ViewSet):
         """
         try:
             games = Game.objects.all()
-            serializer = GameSerializer(games, many=True)
+            serializer = GameSerializer(games, many=True, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -119,6 +119,10 @@ class GameSerializer(serializers.ModelSerializer):
     """JSON serializer"""
 
     categories = CategorySerializer(many=True)
+    is_owner = serializers.SerializerMethodField()
+
+    def get_is_owner(self, obj):
+        return self.context["request"].user == obj.user
 
     class Meta:
         model = Game
@@ -133,4 +137,5 @@ class GameSerializer(serializers.ModelSerializer):
             "estimated_playtime",
             "recommended_age",
             "categories",
+            "is_owner",
         )
