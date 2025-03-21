@@ -3,6 +3,7 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from raterapi.models import Game
+from .categories import CategorySerializer
 
 
 class GameViewSet(ViewSet):
@@ -19,15 +20,35 @@ class GameViewSet(ViewSet):
         """
         game = Game()
         game.user = request.auth.user
-        game.sample_name = request.data["name"]
-        game.sample_description = request.data["description"]
+        game.title = request.data["title"]
+        game.year_released = request.data["year_released"]
+        game.description = request.data["description"]
+        game.designer = request.data["designer"]
+        game.number_of_players = request.data["number_of_players"]
+        game.estimated_playtime = request.data["estimated_playtime"]
+        game.recommended_age = request.data["recommended_age"]
 
-        try:
+        if (
+            game.title is not None
+            and game.year_released is not None
+            and game.description is not None
+            and game.designer is not None
+            and game.number_of_players is not None
+            and game.estimated_playtime is not None
+            and game.recommended_age is not None
+        ):
+
             game.save()
-            serializer = GameSerializer(game)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as ex:
-            return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            category_ids = request.data.get("categories", [])
+            game.categories.set(category_ids)
+
+            try:
+                serializer = GameSerializer(game)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as ex:
+                return Response(
+                    {"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST
+                )
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single item
@@ -97,12 +118,15 @@ class GameViewSet(ViewSet):
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer"""
 
+    categories = CategorySerializer(many=True)
+
     class Meta:
         model = Game
         fields = (
             "id",
             "user",
             "title",
+            "year_released",
             "description",
             "designer",
             "number_of_players",
