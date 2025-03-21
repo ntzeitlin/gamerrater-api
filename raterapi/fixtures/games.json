@@ -5,6 +5,7 @@
         "fields": {
             "user": 1,
             "title": "Catan",
+            "year_released": 1995,
             "description": "A game of trading and strategy.",
             "designer": "Klaus Teuber",
             "number_of_players": 3,
@@ -19,13 +20,13 @@
         "fields": {
             "user": 2,
             "title": "Codenames",
+            "year_released": 2015,
             "description": "A word-based deduction game.",
             "designer": "Vlaada Chvátil",
             "number_of_players": 4,
             "estimated_playtime": 15,
             "recommended_age": 12,
             "categories": [1, 2]
-
         }
     },
     {
@@ -34,13 +35,13 @@
         "fields": {
             "user": 3,
             "title": "Gloomhaven",
+            "year_released": 2017,
             "description": "A cooperative dungeon-crawling RPG.",
             "designer": "Isaac Childres",
             "number_of_players": 4,
             "estimated_playtime": 120,
             "recommended_age": 14,
             "categories": [1, 2]
-
         }
     },
     {
@@ -49,13 +50,13 @@
         "fields": {
             "user": 4,
             "title": "Dungeons & Dragons",
+            "year_released": 1974,
             "description": "The classic tabletop RPG.",
             "designer": "Gary Gygax, Dave Arneson",
             "number_of_players": 5,
             "estimated_playtime": 180,
             "recommended_age": 12,
             "categories": [1, 2]
-
         }
     },
     {
@@ -64,6 +65,7 @@
         "fields": {
             "user": 5,
             "title": "The Legend of Zelda: Breath of the Wild",
+            "year_released": 2017,
             "description": "An open-world action-adventure game.",
             "designer": "Eiji Aonuma",
             "number_of_players": 1,
