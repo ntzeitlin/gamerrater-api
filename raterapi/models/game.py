@@ -16,3 +16,17 @@ class Game(models.Model):
     categories = models.ManyToManyField(
         "Category", through="GameCategory", related_name="games"
     )
+
+    @property
+    def average_rating(self):
+        """Average rating calculated attribute for each game"""
+        ratings = self.reviews.all()
+
+        if not ratings.exists():
+            return 0
+
+        total_rating = 0
+        for review in ratings:
+            total_rating += review.rating
+
+        return round(total_rating / ratings.count(), 2)

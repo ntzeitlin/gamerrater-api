@@ -8,5 +8,5 @@ class Review(models.Model):
     comment = models.TextField()
     rating = models.IntegerField()
 
-    def __str__(self):
-        return f"{self.user.username} - {self.game.title} - {self.rating}"
+    # def __str__(self):
+    #     return f"{self.user.username} - {self.game.title} - {self.rating}"

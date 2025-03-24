@@ -130,6 +130,7 @@ class GameSerializer(serializers.ModelSerializer):
     # categories = CategorySerializer(many=True)
     user = UserSerializer(many=False)
     is_owner = serializers.SerializerMethodField()
+    average_rating = serializers.ReadOnlyField()
 
     def get_is_owner(self, obj):
         return self.context["request"].user == obj.user
@@ -148,4 +149,5 @@ class GameSerializer(serializers.ModelSerializer):
             "recommended_age",
             "categories",
             "is_owner",
+            "average_rating",
         )
