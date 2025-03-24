@@ -2,6 +2,7 @@
 
 rm db.sqlite3
 rm -rf ./raterapi/migrations
+rm -rf ./media/actionimages
 python3 manage.py migrate
 python3 manage.py makemigrations raterapi
 python3 manage.py migrate raterapi

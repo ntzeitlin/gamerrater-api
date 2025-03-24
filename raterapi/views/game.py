@@ -3,8 +3,8 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from raterapi.models import Game
-from .categories import CategorySerializer
 from .users import UserSerializer
+from .picture import PictureSerializer
 
 
 class GameViewSet(ViewSet):
@@ -128,6 +128,7 @@ class GameSerializer(serializers.ModelSerializer):
     """JSON serializer"""
 
     # categories = CategorySerializer(many=True)
+    pictures = PictureSerializer(many=True)
     user = UserSerializer(many=False)
     is_owner = serializers.SerializerMethodField()
     average_rating = serializers.ReadOnlyField()
@@ -150,4 +151,5 @@ class GameSerializer(serializers.ModelSerializer):
             "categories",
             "is_owner",
             "average_rating",
+            "pictures",
         )
