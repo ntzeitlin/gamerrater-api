@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from raterapi.models import Game
 from .categories import CategorySerializer
+from .users import UserSerializer
 
 
 class GameViewSet(ViewSet):
@@ -63,24 +64,32 @@ class GameViewSet(ViewSet):
         except Exception as ex:
             return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
-    # def update(self, request, pk=None):
-    #     """Handle PUT requests
+    def update(self, request, pk=None):
+        """Handle PUT requests
 
-    #     Returns:
-    #         Response -- Empty body with 204 status code
-    #     """
-    #     try:
-    #         game = Game.objects.get(pk=pk)
-    #         game.sample_name = request.data["name"]
-    #         game.sample_description = request.data["description"]
-    #         game.save()
-    #     except Game.DoesNotExist:
-    #         return Response(None, status=status.HTTP_404_NOT_FOUND)
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        try:
+            game = Game.objects.get(pk=pk)
+            game.user = request.auth.user
+            game.title = request.data["title"]
+            game.year_released = request.data["year_released"]
+            game.description = request.data["description"]
+            game.designer = request.data["designer"]
+            game.number_of_players = request.data["number_of_players"]
+            game.estimated_playtime = request.data["estimated_playtime"]
+            game.recommended_age = request.data["recommended_age"]
+            category_ids = request.data.get("categories", [])
+            game.categories.set(category_ids)
+            game.save()
+        except Game.DoesNotExist:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
 
-    #     except Exception as ex:
-    #         return HttpResponseServerError(ex)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
 
-    #     return Response(None, status=status.HTTP_204_NO_CONTENT)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk=None):
         """Handle DELETE requests for a single item
@@ -118,7 +127,8 @@ class GameViewSet(ViewSet):
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer"""
 
-    categories = CategorySerializer(many=True)
+    # categories = CategorySerializer(many=True)
+    user = UserSerializer(many=False)
     is_owner = serializers.SerializerMethodField()
 
     def get_is_owner(self, obj):
