@@ -73,5 +73,155 @@
             "recommended_age": 10,
             "categories": [1, 2]
         }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 6,
+        "fields": {
+            "user": 1,
+            "title": "Carcassonne",
+            "year_released": 2000,
+            "description": "A tile-placement game where players build landscapes.",
+            "designer": "Klaus-Jürgen Wrede",
+            "number_of_players": 2,
+            "estimated_playtime": 45,
+            "recommended_age": 8,
+            "categories": [3]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 7,
+        "fields": {
+            "user": 2,
+            "title": "Ticket to Ride",
+            "year_released": 2004,
+            "description": "A railway-themed board game of route-building.",
+            "designer": "Alan R. Moon",
+            "number_of_players": 4,
+            "estimated_playtime": 60,
+            "recommended_age": 8,
+            "categories": [4]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 8,
+        "fields": {
+            "user": 3,
+            "title": "Wingspan",
+            "year_released": 2019,
+            "description": "A strategic game about attracting birds to habitats.",
+            "designer": "Elizabeth Hargrave",
+            "number_of_players": 4,
+            "estimated_playtime": 70,
+            "recommended_age": 10,
+            "categories": [5]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 9,
+        "fields": {
+            "user": 4,
+            "title": "Azul",
+            "year_released": 2017,
+            "description": "A tile-drafting game inspired by Portuguese art.",
+            "designer": "Michael Kiesling",
+            "number_of_players": 4,
+            "estimated_playtime": 30,
+            "recommended_age": 8,
+            "categories": [3]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 10,
+        "fields": {
+            "user": 5,
+            "title": "Scythe",
+            "year_released": 2016,
+            "description": "A game of conquest, economy, and technology in an alternate-history 1920s.",
+            "designer": "Jamey Stegmaier",
+            "number_of_players": 5,
+            "estimated_playtime": 120,
+            "recommended_age": 12,
+            "categories": [2]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 11,
+        "fields": {
+            "user": 1,
+            "title": "Splendor",
+            "year_released": 2014,
+            "description": "A game of collecting gems and developing commerce.",
+            "designer": "Marc André",
+            "number_of_players": 4,
+            "estimated_playtime": 30,
+            "recommended_age": 10,
+            "categories": [4]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 12,
+        "fields": {
+            "user": 2,
+            "title": "Dominion",
+            "year_released": 2008,
+            "description": "The classic deck-building game.",
+            "designer": "Donald X. Vaccarino",
+            "number_of_players": 4,
+            "estimated_playtime": 30,
+            "recommended_age": 10,
+            "categories": [5]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 13,
+        "fields": {
+            "user": 3,
+            "title": "Terraforming Mars",
+            "year_released": 2016,
+            "description": "A game about making Mars habitable through strategy and resources.",
+            "designer": "Jacob Fryxelius",
+            "number_of_players": 5,
+            "estimated_playtime": 120,
+            "recommended_age": 12,
+            "categories": [1]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 14,
+        "fields": {
+            "user": 4,
+            "title": "7 Wonders",
+            "year_released": 2010,
+            "description": "A civilization-building card-drafting game.",
+            "designer": "Antoine Bauza",
+            "number_of_players": 5,
+            "estimated_playtime": 30,
+            "recommended_age": 10,
+            "categories": [3]
+        }
+    },
+    {
+        "model": "raterapi.game",
+        "pk": 15,
+        "fields": {
+            "user": 5,
+            "title": "Risk",
+            "year_released": 1957,
+            "description": "A classic game of world domination.",
+            "designer": "Albert Lamorisse",
+            "number_of_players": 5,
+            "estimated_playtime": 180,
+            "recommended_age": 10,
+            "categories": [2]
+        }
     }
 ]

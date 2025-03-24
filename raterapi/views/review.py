@@ -19,15 +19,28 @@ class ReviewViewSet(ViewSet):
         review = Review()
         review.user = request.auth.user
 
-        game = request.data["game"]
-        game_instance = Game.objects.get(pk=game)
+        game = request.data.get("game")
+        if not game:
+            return Response(
+                {"error": "Game ID is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            game_instance = Game.objects.get(pk=game)
+        except Game.DoesNotExist:
+            return Response(
+                {"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         review.game = game_instance
-        review.comment = request.data["comment"]
-        review.rating = request.data["rating"]
+        review.comment = request.data.get("comment", "")
+        review.rating = request.data.get("rating", 0)
         review.save()
 
         try:
-            serializer = ReviewSerializer(review)
+            serializer = ReviewSerializer(
+                review, many=False, context={"request": request}
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as ex:
             return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
@@ -106,11 +119,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     game = GameSerializer(many=False)
     user = UserSerializer(many=False)
-    is_owner = serializers.SerializerMethodField()
-
-    def get_is_owner(self, obj):
-        return self.context["request"].user == obj.user
 
     class Meta:
         model = Review
-        fields = ("id", "user", "game", "comment", "rating", "is_owner")
+        fields = ("id", "user", "game", "comment", "rating")

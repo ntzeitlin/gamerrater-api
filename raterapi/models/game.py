@@ -11,7 +11,7 @@ class Game(models.Model):
     description = models.TextField()
     designer = models.CharField(max_length=255)
     number_of_players = models.IntegerField()
-    estimated_playtime = models.IntegerField(help_text="Estimated playtime in minutes")
+    estimated_playtime = models.IntegerField()
     recommended_age = models.IntegerField()
     categories = models.ManyToManyField(
         "Category", through="GameCategory", related_name="games"

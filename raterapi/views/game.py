@@ -1,4 +1,5 @@
 from django.http import HttpResponseServerError
+from django.db.models import Q
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -117,7 +118,17 @@ class GameViewSet(ViewSet):
             Response -- JSON serialized array
         """
         try:
-            games = Game.objects.all()
+            search_text = self.request.query_params.get("q", None)
+            games = (
+                Game.objects.filter(
+                    Q(title__contains=search_text)
+                    | Q(description__contains=search_text)
+                    | Q(designer__contains=search_text)
+                )
+                if search_text
+                else Game.objects.all()
+            )
+
             serializer = GameSerializer(games, many=True, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as ex:
