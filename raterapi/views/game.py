@@ -45,9 +45,12 @@ class GameViewSet(ViewSet):
             game.categories.set(category_ids)
 
             try:
-                serializer = GameSerializer(game)
+                serializer = GameSerializer(
+                    game, many=False, context={"request": request}
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception as ex:
+                print("error:", ex)
                 return Response(
                     {"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST
                 )
@@ -119,15 +122,19 @@ class GameViewSet(ViewSet):
         """
         try:
             search_text = self.request.query_params.get("q", None)
-            games = (
-                Game.objects.filter(
+            sort_text = self.request.query_params.get("orderby", None)
+
+            games = Game.objects.all()
+
+            if search_text:
+                games = Game.objects.filter(
                     Q(title__contains=search_text)
                     | Q(description__contains=search_text)
                     | Q(designer__contains=search_text)
                 )
-                if search_text
-                else Game.objects.all()
-            )
+
+            if sort_text:
+                games = Game.objects.order_by(sort_text)
 
             serializer = GameSerializer(games, many=True, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)

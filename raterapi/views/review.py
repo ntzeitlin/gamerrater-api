@@ -43,6 +43,7 @@ class ReviewViewSet(ViewSet):
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as ex:
+            print("Error:", ex)
             return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
