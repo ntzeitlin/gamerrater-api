@@ -40,8 +40,6 @@ class GameTests(APITestCase):
 
         # Parse the JSON in the response body
         json_response = json.loads(response.content)
-        print("Response Status Code:", response.status_code)
-        print("Response Content:", response.content.decode())
 
         # Assert that the game was created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -51,3 +49,38 @@ class GameTests(APITestCase):
         self.assertEqual(json_response["designer"], "NTZ")
         self.assertEqual(json_response["estimated_playtime"], 100)
         self.assertEqual(json_response["number_of_players"], 100)
+
+    def test_get_game(self):
+        """
+        Ensure we can get an existing game.
+        """
+
+        # Seed the database with a game
+        game = Game()
+        game.id = 1
+        game.title = "Test Game"
+        game.year_released = 1987
+        game.description = "That suckssss"
+        game.designer = "New Designer"
+        game.number_of_players = 20
+        game.estimated_playtime = 1010
+        game.recommended_age = 30
+        game.user_id = 1
+        game.categories.set([2])
+        game.save()
+
+        # Initiate request and store response
+        response = self.client.get(f"/games/{game.id}")
+
+        # Parse the JSON in the response body
+        json_response = json.loads(response.content)
+
+        # Assert that the game was retrieved
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert that the values are correct
+        self.assertEqual(json_response["title"], "Test Game")
+        self.assertEqual(json_response["year_released"], 1987)
+        self.assertEqual(json_response["categories"], [2])
+        self.assertEqual(json_response["description"], "That suckssss")
+        self.assertEqual(json_response["designer"], "New Designer")

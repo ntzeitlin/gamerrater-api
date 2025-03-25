@@ -155,7 +155,7 @@ class GameSerializer(serializers.ModelSerializer):
     average_rating = serializers.ReadOnlyField()
 
     # Alternatively, could derive the value dynamically here in the serializer,
-    #  using the .SerializerMethodField() method like is_owner.
+    # using the .SerializerMethodField() method like is_owner.
     def get_is_owner(self, obj):
         return self.context["request"].user == obj.user
 
