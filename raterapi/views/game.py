@@ -149,8 +149,13 @@ class GameSerializer(serializers.ModelSerializer):
     pictures = PictureSerializer(many=True)
     user = UserSerializer(many=False)
     is_owner = serializers.SerializerMethodField()
+
+    # Since average_rating is declared as a @property and calculated in the game model,
+    # add it here as a read only field.
     average_rating = serializers.ReadOnlyField()
 
+    # Alternatively, could derive the value dynamically here in the serializer,
+    #  using the .SerializerMethodField() method like is_owner.
     def get_is_owner(self, obj):
         return self.context["request"].user == obj.user
 
