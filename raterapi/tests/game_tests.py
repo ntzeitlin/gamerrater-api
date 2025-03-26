@@ -84,3 +84,75 @@ class GameTests(APITestCase):
         self.assertEqual(json_response["categories"], [2])
         self.assertEqual(json_response["description"], "That suckssss")
         self.assertEqual(json_response["designer"], "New Designer")
+        self.assertEqual(json_response["number_of_players"], 20)
+        self.assertEqual(json_response["recommended_age"], 30)
+
+    def test_change_game(self):
+        """
+        Ensure twe can change an existing game
+        """
+
+        # Seed the database with a game
+        game = Game()
+        game.id = 1
+        game.title = "Test Game"
+        game.year_released = 1987
+        game.description = "That suckssss"
+        game.designer = "New Designer"
+        game.number_of_players = 20
+        game.estimated_playtime = 1010
+        game.recommended_age = 30
+        game.user_id = 1
+        game.categories.set([2])
+        game.save()
+
+        # Define new properties for the game
+        data = {
+            "title": "Test Game, updated",
+            "year_released": 1987,
+            "description": "New description",
+            "designer": "New, updated, Designer",
+            "number_of_players": 20,
+            "estimated_playtime": 1010,
+            "recommended_age": 30,
+            "categories": [2],
+        }
+
+        response = self.client.put(f"/games/{game.id}", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # GET game again to verify changes were made
+        response = self.client.get(f"/games/{game.id}")
+        json_response = json.loads(response.content)
+
+        # Assert that the properties are correct
+        self.assertEqual(json_response["categories"], [2])
+        self.assertEqual(json_response["description"], "New description")
+        self.assertEqual(json_response["designer"], "New, updated, Designer")
+        self.assertEqual(json_response["number_of_players"], 20)
+        self.assertEqual(json_response["recommended_age"], 30)
+
+    def test_delete_game(self):
+        """
+        Ensure we can delete an existing game.
+        """
+        game = Game()
+        game.id = 1
+        game.title = "Test Game"
+        game.year_released = 1987
+        game.description = "That suckssss"
+        game.designer = "New Designer"
+        game.number_of_players = 20
+        game.estimated_playtime = 1010
+        game.recommended_age = 30
+        game.user_id = 1
+        game.categories.set([2])
+        game.save()
+
+        # DELETE the game you just created
+        response = self.client.delete(f"/games/{game.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # GET the game again to verify you get a 404 response
+        response = self.client.get(f"/games/{game.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
