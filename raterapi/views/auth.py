@@ -8,9 +8,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 
+# NOTE: Functional views have to use decorators to assign their use
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def login_user(request):
+def login_user(request) -> Response:
     """Handles the authentication of a gamer
 
     Method arguments:

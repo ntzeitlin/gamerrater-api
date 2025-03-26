@@ -20,8 +20,9 @@ class GameViewSet(ViewSet):
         Returns:
             Response -- JSON serialized instance
         """
+
         game = Game()
-        game.user = request.auth.user
+        game.user = request.user
         game.title = request.data["title"]
         game.year_released = request.data["year_released"]
         game.description = request.data["description"]
@@ -118,6 +119,9 @@ class GameViewSet(ViewSet):
 
     def list(self, request):
         """Handle GET requests for all items
+
+        Check for search or sort queries and modify
+        response data accordingly.
 
         Returns:
             Response -- JSON serialized array
