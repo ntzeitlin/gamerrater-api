@@ -1,5 +1,6 @@
 from django.http import HttpResponseServerError
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -11,50 +12,49 @@ from .picture import PictureSerializer
 class GameViewSet(ViewSet):
     """Game view set"""
 
-    # ADD TRY EXCEPT STATEMENTS FOR EACH FOREIGN KEY REFERENCE / objects.get
-    # LOOK AT EXAMPLE IN TIMECAPSULE CLASS PROJECT
+    # NOTE: Below is the manual, more imperative, approach to ViewSet Methods using DRF.
+    #       Instead, you can use a more declarative approach.
+
+    # def create(self, request):
+    #     """Handle POST operations
+
+    #     Returns:
+    #         Response -- JSON serialized instance
+    #     """
+
+    #     game = Game()
+    #     game.user = request.user
+    #     game.title = request.data["title"]
+    #     game.year_released = request.data["year_released"]
+    #     game.description = request.data["description"]
+    #     game.designer = request.data["designer"]
+    #     game.number_of_players = request.data["number_of_players"]
+    #     game.estimated_playtime = request.data["estimated_playtime"]
+    #     game.recommended_age = request.data["recommended_age"]
+
+    #     game.save()
+    #     category_ids = request.data.get("categories", [])
+    #     game.categories.set(category_ids)
+
+    #     try:
+    #         serializer = GameSerializer(game, many=False, context={"request": request})
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     except Exception as ex:
+    #         print("error:", ex)
+    #         return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request):
-        """Handle POST operations
+        serializer = GameSerializer(data=request.data, context={"request": request})
 
-        Returns:
-            Response -- JSON serialized instance
-        """
+        if serializer.is_valid():
+            game = serializer.save(user=request.user)
 
-        game = Game()
-        game.user = request.user
-        game.title = request.data["title"]
-        game.year_released = request.data["year_released"]
-        game.description = request.data["description"]
-        game.designer = request.data["designer"]
-        game.number_of_players = request.data["number_of_players"]
-        game.estimated_playtime = request.data["estimated_playtime"]
-        game.recommended_age = request.data["recommended_age"]
-
-        if (
-            game.title is not None
-            and game.year_released is not None
-            and game.description is not None
-            and game.designer is not None
-            and game.number_of_players is not None
-            and game.estimated_playtime is not None
-            and game.recommended_age is not None
-        ):
-
-            game.save()
             category_ids = request.data.get("categories", [])
             game.categories.set(category_ids)
 
-            try:
-                serializer = GameSerializer(
-                    game, many=False, context={"request": request}
-                )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            except Exception as ex:
-                print("error:", ex)
-                return Response(
-                    {"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST
-                )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single item
@@ -70,6 +70,8 @@ class GameViewSet(ViewSet):
             return Response(None, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             return Response({"reason": ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    # NOTE: Declarative Approach Below:
 
     def update(self, request, pk=None):
         """Handle PUT requests
@@ -152,12 +154,12 @@ class GameSerializer(serializers.ModelSerializer):
     """JSON serializer"""
 
     # categories = CategorySerializer(many=True)
-    pictures = PictureSerializer(many=True)
-    user = UserSerializer(many=False)
+    pictures = PictureSerializer(many=True, read_only=True)
+    user = UserSerializer(many=False, read_only=True)
     is_owner = serializers.SerializerMethodField()
 
     # Since average_rating is declared as a @property and calculated in the game model,
-    # add it here as a read only field.
+    # add it here as a read only field...
     average_rating = serializers.ReadOnlyField()
 
     # Alternatively, could derive the value dynamically here in the serializer,
@@ -182,3 +184,20 @@ class GameSerializer(serializers.ModelSerializer):
             "average_rating",
             "pictures",
         )
+        read_only_fields = ("id", "user", "is_owner", "average_rating", "pictures")
+
+    # NOTE: You can validate incoming data using the serializer.
+    # Validation in Django REST framework serializers
+
+    # Field-level validation:
+    def validate_year_released(self, value):
+        try:
+            year = int(value)
+            current_year = timezone.now().year
+            if value > current_year:
+                raise serializers.ValidationError("Year cannot be in the future.")
+            return year
+        except (ValueError, TypeError) as exc:
+            raise serializers.ValidationError(
+                "Year released must be a valid year"
+            ) from exc
